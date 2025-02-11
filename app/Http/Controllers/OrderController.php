@@ -30,21 +30,22 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'customer_id' => 'required|exists:customers,id',
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'total_price' => 'required|numeric|min:0',
         ]);
     
-        // Membuat order baru
+        // Membuat order baru dengan customer_id
         $order = Order::create([
+            'customer_id' => $request->customer_id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'total_price' => $request->total_price,
         ]);
     
-        // Pastikan kode statusnya 201
         return response()->json($order, 201);
-    }
+    }    
 
     /**
      * Display the specified resource.
