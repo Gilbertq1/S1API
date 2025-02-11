@@ -34,14 +34,15 @@ class OrderController extends Controller
             'quantity' => 'required|integer|min:1',
             'total_price' => 'required|numeric|min:0',
         ]);
-
+    
         // Membuat order baru
         $order = Order::create([
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
             'total_price' => $request->total_price,
         ]);
-
+    
+        // Pastikan kode statusnya 201
         return response()->json($order, 201);
     }
 
@@ -50,7 +51,12 @@ class OrderController extends Controller
      */
     public function show(string $id)
     {
-        return response()->json($order->load('product'));
+        $order = Order::with('product')->find($id); // Cari data order dengan relasi 'product'
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404); // Tanggapi jika tidak ditemukan
+        }
+    
+        return response()->json($order); // Kembalikan data order
     }
 
     /**
